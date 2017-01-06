@@ -9,6 +9,9 @@ class MainActions extends mfwActions
 
 	const SESKEY_URL_BEFORE_LOGIN = 'url_before_login';
 
+	/**
+	 * @var User
+	 */
 	protected $login_user = null;
 
 	public function initialize()
@@ -26,6 +29,11 @@ class MainActions extends mfwActions
 
 		// package/install_plist はセッションが使えないため別途認証する.
 		if($this->module==='package' && $this->action==='install_plist'){
+			return null;
+		}
+
+		// QR CodeはpublicなActionに
+		if($this->module === "qr") {
 			return null;
 		}
 
