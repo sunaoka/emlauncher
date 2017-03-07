@@ -10,11 +10,17 @@ class S3 {
 	protected function __construct()
 	{
 		$this->config = Config::get('aws');
-		$this->client = Aws\S3\S3Client::factory(
-			array(
-				'key' => $this->config['key'],
-				'secret' => $this->config['secret'],
-				));
+		if ( $this->config == null ) {
+			$client = null;
+			$this->config = Config::get('local_filesystem');
+		}
+		else {
+			$this->client = Aws\S3\S3Client::factory(
+				array(
+					'key' => $this->config['key'],
+					'secret' => $this->config['secret'],
+					));
+		}
 	}
 	protected function singleton()
 	{
@@ -27,6 +33,11 @@ class S3 {
 	public static function uploadData($key,$data,$type,$acl='private')
 	{
 		$s3 = static::singleton();
+		if ( $s3->client == null ) {
+			$path = $s3->config['path'];
+                	file_put_contents("{$path}/{$key}", $data);
+                	return;
+		}
 		$r = $s3->client->putObject(
 			array(
 				'Bucket' => $s3->config['bucket_name'],
@@ -41,6 +52,12 @@ class S3 {
 	public static function uploadFile($key,$filename,$type,$acl='private')
 	{
 		$s3 = static::singleton();
+		if ( $s3->client == null ) {
+			$path = $s3->config['path'];
+			$fp = fopen($filename,'rb');
+			file_put_contents("{$path}/{$key}", $data);
+			return;
+		}
 		$fp = fopen($filename,'rb');
 		$r = $s3->client->putObject(
 			array(
@@ -58,6 +75,11 @@ class S3 {
 	public static function rename($srckey,$dstkey,$acl='private')
 	{
 		$s3 = static::singleton();
+		if ( $s3->client == null ) {
+			$path = $s3->config['path'];
+			rename("{$path}/{$srckey}", "{$path}/{$dstkey}");
+			return;
+		}
 		$bucket = $s3->config['bucket_name'];
 
 		// copy
@@ -79,6 +101,11 @@ class S3 {
 	public static function delete($key)
 	{
 		$s3 = static::singleton();
+		if ( $s3->client == null ) {
+			$path = $s3->config['path'];
+			unlink("{$path}/{$key}");
+			return;
+		}
 		$bucket = $s3->config['bucket_name'];
 		$s3->client->deleteObject(
 			array(
@@ -90,6 +117,10 @@ class S3 {
 	public static function url($key,$expires=null)
 	{
 		$s3 = static::singleton();
+		if ( $s3->client == null ) {
+			$url = $s3->config['url'];
+                	return "{$url}/{$key}";
+		}
 		$bucket = $s3->config['bucket_name'];
 		if($expires===null){
 			return "https://{$bucket}.s3.amazonaws.com/{$key}";
