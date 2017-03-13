@@ -55,7 +55,8 @@ class S3 {
 		if ( $s3->client == null ) {
 			$path = $s3->config['path'];
 			$fp = fopen($filename,'rb');
-			file_put_contents("{$path}/{$key}", $data);
+			file_put_contents("{$path}/{$key}", $fp);
+			fclose($fp);
 			return;
 		}
 		$fp = fopen($filename,'rb');
