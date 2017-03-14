@@ -6,12 +6,14 @@ class User
 	const SESKEY = 'login_user';
 
 	protected $mail;
+	protected $as_dmin;
 	protected $pkg_install_dates = array();
 	protected $install_apps = null;
 
-	public function __construct($mail)
+	public function __construct($mail, $as_admin = 0)
 	{
 		$this->mail = $mail;
+		$this->as_admin = $as_admin;
 	}
 
 	public function getMail()
@@ -26,13 +28,14 @@ class User
 		if(!isset($session['mail'])){
 			return null;
 		}
-		return new self($session['mail']);
+		return new self($session['mail'], $session['as_admin']);
 	}
 
-	public static function login($mail)
+	public static function login($mail, $as_admin = 0)
 	{
 		$data = array(
 			'mail' => $mail,
+			'as_admin' => $as_admin,
 			);
 		mfwSession::set(self::SESKEY,$data);
 		return new self($mail);
@@ -83,6 +86,10 @@ class User
 		return PackageDb::retrieveByPKs($pkg_ids);
 	}
 
+	public function isAdmin()
+	{
+		return ( $this->as_admin );
+	}
 
 	/**
 	 * @return GuestPass[]

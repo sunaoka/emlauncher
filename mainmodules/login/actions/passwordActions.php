@@ -14,8 +14,8 @@ class passwordActions extends loginActions
 		if(!$user_pass || !$user_pass->checkPassword($pass)){
 			return $this->buildErrorPage('invalid email or password');
 		}
-
-		User::login($mail);
+		$as_admin = $user_pass->getAsAdmin();
+		User::login($mail, $as_admin);
 
 		return $this->redirectUrlBeforeLogin();
 	}
