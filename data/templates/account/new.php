@@ -12,9 +12,6 @@
       <div id="alert_missmatch_email" class="alert alert-danger hidden">
         EMailが一致しません
       </div>
-      <div id="alert_no_password" class="alert alert-danger hidden">
-        パスワードが入力されていません
-      </div>
       <div id="alert_missmatch_password" class="alert alert-danger hidden">
         パスワードが一致しません
       </div>
@@ -77,10 +74,6 @@ $('form').on('submit',function(){
   } 
   if ( email1 != email2 ) {
     $('#alert_missmatch_email').removeClass('hidden');
-    return false;
-  }
-  if(pass1=='' || pass2==''){
-    $('#alert_no_password').removeClass('hidden');
     return false;
   }
   if(pass1!=pass2){

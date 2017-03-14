@@ -58,18 +58,26 @@ class accountActions extends MainActions
 		$con = mfwDBConnection::getPDO();
 		$con->beginTransaction();
 		try{
-			$user = UserPassDb::insertNewUser($email, $password, $as_admin);
+			$user_pass = UserPassDb::insertNewUser($email, $password, $as_admin);
 			$con->commit();
+			$sendResetMail = false;
+			if ( empty($password) ) {
+				$user_pass->sendResetMail();
+				$sendResetMail = true;
+			} 
 		}
 		catch(Exception $e){
 			error_log(__METHOD__.'('.__LINE__.'): '.get_class($e).":{$e->getMessage()}");
 			$con->rollback();
 			throw $e;
 		}
-		apache_log('user_id',$user->getMail());
+		apache_log('user_id', $user_pass->getMail());
 
-		//return $this->redirect("/top");
-		return $this->build();
+                $params = array(
+                        'sendResetMail' => $sendResetMail,
+                        );
+
+		return $this->build($params);
 	}
 
 	public function executeIndex()
