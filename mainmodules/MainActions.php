@@ -1,6 +1,7 @@
 <?php
 require_once APP_ROOT.'/model/User.php';
 require_once APP_ROOT.'/model/Config.php';
+require_once APP_ROOT.'/model/Package.php';
 
 class MainActions extends mfwActions
 {
@@ -37,6 +38,34 @@ class MainActions extends mfwActions
 			return null;
 		}
 
+		if ( Config::get('enable_request_ios_udid') ) {
+              		static $pf = array(
+                        	'android' => Package::PF_ANDROID,
+                        	'ios' => Package::PF_IOS,
+                        	'all' => null,
+                        	);
+
+                	$platform = mfwRequest::param('pf');
+                	if ( !in_array($platform, array('android', 'ios', 'all')) ) {
+                        	$ua = mfwRequest::userAgent();
+                       		if ( $ua->isAndroid() ) {
+                                	$platform = 'android';
+                        	}
+                        	elseif ( $ua->isIOS() ) {
+                                	$platform = 'ios';
+                        	}
+                        	else {
+                                	$platform = 'unknown';
+                        	}
+                	}
+
+			$device_uuid = mfwRequest::param('device_uuid');
+			error_log("device_uuid: $device_uuid\n", 3, "/tmp/module.log");
+			if ( $platform == 'ios' && !empty($device_uuid) ) {
+				User::loginWithUUID($device_uuid);
+			}
+		}
+
 		$this->login_user = User::getLoginUser();
 		if(!$this->login_user && $this->getModule()!='login'){
 			$scheme = Config::get('enable_https')?'https':null;
@@ -46,6 +75,21 @@ class MainActions extends mfwActions
 
 		if($this->login_user){
 			apache_log('user',$this->login_user->getMail());
+		}
+
+		if ( Config::get('enable_request_ios_udid') ) {
+			error_log("modile: $this->module\n", 3, "/tmp/module.log");
+			if ( in_array($this->module, array('profile')) ) {
+				return null;
+			}
+
+			if ( $this->login_user ) {
+				$device_uuid = $this->login_user->getDeviceUUID();
+				error_log("login_user: " . $device_uuid . "\n", 3, "/tmp/module.log");
+		  		if ( $platform == "ios" && empty($device_uuid) ) {
+                        		return $this->redirect(mfwRequest::makeUrl('/profile'));
+				}
+			}
 		}
 		return null;
 	}
