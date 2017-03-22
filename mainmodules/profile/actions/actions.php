@@ -30,19 +30,40 @@ class profileActions extends MainActions
 		$fp = fopen($plain_profile, "w");
 		fwrite($fp, $data);
 		fclose($fp);
+
+		$cert_file = APP_ROOT."/data/cert/cert.pem";
+		$chain_file = APP_ROOT."/data/cert/chain.pem";
+		$privkey_file = APP_ROOT."/data/cert/privkey.pem";
 		//openssl_pkcs7_sign($plain_profile , $signed_profile, "file://".realpath("/tmp/ssl_cert.pem"), array("file://".realpath("/tmp/ssl_private.pem"), ''), array(), PKCS7_DETACHED, realpath("/tmp/ssl_chain.pem"));
-		$openssl_cmd = "openssl smime -sign -signer /tmp/ssl_cert.pem -inkey /tmp/ssl_private.pem -certfile /tmp/ssl_chain.pem -nodetach -outform der -in $plain_profile -out $signed_profile";
+		$openssl_cmd = "openssl smime -sign -signer $cert_file -inkey $privkey_file -certfile $chain_file -nodetach -outform der -in $plain_profile -out $signed_profile";
 		system($openssl_cmd, $return_val);
-		return file_get_contents($signed_profile);
+		$data = file_get_contents($signed_profile);
+		unlink($plain_profile);
+		unlink($signed_profile);		
+		return ($data);
 	}
 
+	public function executeDone()
+	{
+		return $this->build();
+	}
 
 	public function executeDownload()
 	{
 		$emlauncher_url = mfwRequest::makeUrl('');
 		$device_uuid = mfwRequest::param('device_uuid');
+
+		$secp_domain = Config::get('secp_domain');
+		$domain_spec = explode(".", $secp_domain);
+		$p = count($domain_spec);
+		$secp_id = $domain_spec[--$p];
+		while ( $p-- ) {
+			$secp_id .= "." . $domain_spec[$p];
+		}	 
+
 		header('Content-type: application/x-apple-aspen-config; chatset=utf-8');
 		header('Content-Disposition: attachment; filename="get_udid_signed.mobileconfig"');
+
 $data = <<<END
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -51,7 +72,7 @@ $data = <<<END
         <key>PayloadContent</key>
 	<dict>
 	  <key>URL</key>
-	  <string>https://secp.ipv6ready.me:8443/profile?device_uuid=$device_uuid</string>
+	  <string>https://$secp_domain:8443/profile?device_uuid=$device_uuid</string>
 	  <key>DeviceAttributes</key>
 	  <array>
 	    <string>UDID</string>
@@ -62,7 +83,7 @@ $data = <<<END
 	  </array>
 	</dict>
         <key>PayloadOrganization</key>
-        <string>Hoge2Network</string>
+        <string>EMlauncher</string>
         <key>PayloadDisplayName</key>
         <string>EMlauncher UDID Service</string>
         <key>PayloadVersion</key>
@@ -70,7 +91,7 @@ $data = <<<END
         <key>PayloadUUID</key>
         <string>$device_uuid</string>
         <key>PayloadIdentifier</key>
-        <string>hoge2.net.profile-service</string>
+        <string>$secp_id.profile-service</string>
 	<key>PayloadDescription</key>
         <string></string>
         <key>PayloadRemovalDisallowed</key>
@@ -80,9 +101,10 @@ $data = <<<END
     </dict>
 </plist>
 END;
-		echo $this->makeSignedData($data);
+
 		$owner = $this->login_user;
 		$new_ios_udid = IOS_UDIDDb::insertNewIOS_UUID($owner, $device_uuid);
+		echo $this->makeSignedData($data);
 	}
 
 	public function executeIndex()
