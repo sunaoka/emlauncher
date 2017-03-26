@@ -58,6 +58,32 @@ class ApplicationOwnerSet extends mfwObjectSet {
 		mb_internal_encoding('UTF-8');
 		return !mb_send_mail($to,$subject,$body,$header);
 	}
+
+	public function noticeNewRequest(Request $request,Application $app)
+	{
+		$pkg = null;
+		if($request->getPackageId()){
+			$pkg = PackageDb::retrieveByPK($request->getPackageId());
+		}
+		$page_url = mfwRequest::makeURL("/app/request?id={$app->getId()}#request-{$request->getNumber()}");
+		ob_start();
+		include APP_ROOT.'/data/notice_request_mail_template.php';
+		$body = ob_get_clean();
+
+		$addresses = $this->getColumnArray('owner_mail');
+		if(empty($addresses)){
+			return;
+		}
+
+		$subject = "New Request to {$app->getTitle()}";
+		$sender = Config::get('mail_sender');
+		$to = implode(', ',$addresses);
+		$header = "From: $sender";
+
+		mb_language('uni');
+		mb_internal_encoding('UTF-8');
+		return !mb_send_mail($to,$subject,$body,$header);
+	}
 }
 
 /**

@@ -10,13 +10,14 @@ class InstallLog {
 	{
 		$now = date('Y-m-d H:i:s');
 		$sql = 'INSERT INTO install_log'
-			. ' (app_id,package_id,mail,user_agent,installed)'
-			. ' VALUES (:app_id,:package_id,:mail,:user_agent,:installed)';
+			. ' (app_id,package_id,mail,user_agent,device_info_id,installed)'
+			. ' VALUES (:app_id,:package_id,:mail,:user_agent,:device_info_id,:installed)';
 		$bind = array(
 			':app_id' => $pkg->getAppId(),
 			':package_id' => $pkg->getId(),
 			':mail' => $user->getMail(),
 			':user_agent' => $ua->getString(),
+			':device_info_id' => $user->getDeviceInfoId(),
 			':installed' => $now,
 			);
 		mfwDBIBase::query($sql,$bind,$con);
@@ -36,10 +37,11 @@ class InstallLog {
 	 */
 	public static function packageInstalledDates(User $user,$app_id)
 	{
-		$sql = 'SELECT package_id,max(installed) as installed FROM install_log WHERE app_id=:app_id AND mail = :mail GROUP BY package_id';
+		$sql = 'SELECT package_id,max(installed) as installed FROM install_log WHERE app_id=:app_id AND mail = :mail AND device_info_id = :device_info_id GROUP BY package_id';
 		$bind = array(
 			':app_id' => $app_id,
 			':mail' => $user->getMail(),
+			':device_info_id' => $user->getDeviceInfoId(),
 			);
 		$rows = mfwDBIBase::getAll($sql,$bind);
 

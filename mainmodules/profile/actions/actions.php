@@ -2,11 +2,11 @@
 require_once APP_ROOT.'/model/Application.php';
 require_once APP_ROOT.'/model/Package.php';
 require_once APP_ROOT.'/model/Comment.php';
-require_once APP_ROOT.'/model/IOS_UDID.php';
+require_once APP_ROOT.'/model/IOS_DeviceInfo.php';
 
 class profileActions extends MainActions
 {
-	protected $device_uuid = null;
+	protected $device_device_info = null;
 
 	public function initialize()
 	{
@@ -103,7 +103,7 @@ $data = <<<END
 END;
 
 		$owner = $this->login_user;
-		$new_ios_udid = IOS_UDIDDb::insertNewIOS_UUID($owner, $device_uuid);
+		$new_ios_device_info = IOS_DeviceInfoDb::insertNewIOS_DeviceInfo($owner, $device_uuid);
 		echo $this->makeSignedData($data);
 	}
 

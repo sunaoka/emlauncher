@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__.'/actions.php';
 require_once APP_ROOT.'/model/UserPass.php';
-require_once APP_ROOT.'/model/IOS_UDID.php';
+require_once APP_ROOT.'/model/IOS_DeviceInfo.php';
 
 class passwordActions extends loginActions
 {
@@ -40,7 +40,6 @@ class passwordActions extends loginActions
 		}
 		return $this->build($params);
 	}
-
 
 	public function executePassword_reset()
 	{

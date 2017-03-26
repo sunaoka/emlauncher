@@ -3,6 +3,7 @@ drop table if exists `user_pass`;
 create table `user_pass` (
   `mail` varchar(255) not null,
   `passhash` varchar(255) default null,
+  `as_admin` tinyint(4) default 0 comment 'Administrator権限',
   primary key (`mail`)
 )Engine=InnoDB default charset=utf8;
 
@@ -17,8 +18,9 @@ create table `application` (
   `repository` varchar(1000) default null comment 'リポジトリURLなど',
   `last_upload` datetime default null comment 'パッケージの最終アップロード時刻',
   `last_commented` datetime default null comment '最終コメント時刻',
+  `last_requested` datetime default null comment '最終リクエスト時刻',
   `created` datetime not null,
-  `date_to_sort` datetime not null comment 'last_upload,last_comment,createdのうち最新のもの',
+  `date_to_sort` datetime not null comment 'last_upload,last_comment,last_requested,createdのうち最新のもの',
   unique key `idx_api_key` (`api_key`),
   key idx_date_to_sort (`date_to_sort`) comment '新着ソート用',
   primary key (`id`)
@@ -72,6 +74,7 @@ create table install_log (
   `id` integer not null auto_increment,
   `app_id` integer not null,
   `package_id` integer not null,
+  `device_info_id` int(11) default 0 comment 'iOSデバイス情報のid',
   `mail` varchar(255) not null,
   `user_agent` varchar(1000) not null,
   `installed` datetime not null comment 'インストール日時',

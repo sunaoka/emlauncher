@@ -28,3 +28,32 @@ function apache_log($key,$value)
 	}
 }
 
+function var_dump_log($var_name, &$var)
+{
+	ob_start();
+	var_dump($var);
+	$var_dump = ob_get_contents();
+	ob_end_clean();
+	error_log("$var_name: " . $var_dump . "\n", 3, "/tmp/var_dump.log");
+}
+
+// Compatibility for PHP 5.5
+function array_column($target_data, $column_key, $index_key = null)
+{
+	if ( is_array($target_data) === FALSE || count($target_data) === 0 )
+		return FALSE;
+	$result = array();
+	foreach ( $target_data as $array ) {
+		if ( array_key_exists($column_key, $array) === FALSE )
+			continue;
+		if ( is_null($index_key) === FALSE && array_key_exists($index_key, $array) === TRUE ) {
+			$result[$array[$index_key]] = $array[$column_key];
+			continue;
+		}
+		$result[] = $array[$column_key];
+	}
+
+	if (count($result) === 0)
+		return FALSE;
+	return $result;
+}

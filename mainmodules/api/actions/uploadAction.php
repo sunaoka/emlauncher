@@ -49,6 +49,10 @@ class uploadAction extends apiActions
 			if($platform===Package::PF_IOS){
 				$plist = IPAFile::parseInfoPlist($file_info['tmp_name']);
 				$ios_identifier = $plist['CFBundleIdentifier'];
+				if ( Config::get('enable_request_ios_udid') ) {
+					$mobile_provision = IPAFile::parseMobileProvision($file_info['tmp_name']);
+					var_dump_log("mobile_provision", $mobile_provision);
+				}
 			}
 
 			// DBへ保存

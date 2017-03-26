@@ -35,6 +35,12 @@ class S3 {
 		$s3 = static::singleton();
 		if ( $s3->client == null ) {
 			$path = $s3->config['path'];
+			$path_info = pathinfo("{$path}/{$key}");
+			if ( ! file_exists($path_info["dirname"]) ) {
+				if ( ! is_file($path_info["dirname"]) ) {
+					mkdir($path_info["dirname"]);
+				}
+			}
                 	file_put_contents("{$path}/{$key}", $data);
                 	return;
 		}
@@ -54,6 +60,12 @@ class S3 {
 		$s3 = static::singleton();
 		if ( $s3->client == null ) {
 			$path = $s3->config['path'];
+			$path_info = pathinfo("{$path}/{$key}");
+                        if ( ! file_exists($path_info["dirname"]) ) {
+                                if ( ! is_file($path_info["dirname"]) ) {
+                                        mkdir($path_info["dirname"]);
+                                }
+                        }
 			$fp = fopen($filename,'rb');
 			file_put_contents("{$path}/{$key}", $fp);
 			fclose($fp);
@@ -78,6 +90,12 @@ class S3 {
 		$s3 = static::singleton();
 		if ( $s3->client == null ) {
 			$path = $s3->config['path'];
+			$path_info = pathinfo("{$path}/{$dstkey}");
+                        if ( ! file_exists($path_info["dirname"]) ) {
+                                if ( ! is_file($path_info["dirname"]) ) {
+                                        mkdir($path_info["dirname"]);
+                                }
+                        }
 			rename("{$path}/{$srckey}", "{$path}/{$dstkey}");
 			return;
 		}

@@ -14,7 +14,7 @@
 
 <script type="text/javascript">
 var download = function () {
-window.open('https://emlauncher.dc-manage.com/profile/done', '_blank', '');
+window.open('/profile/done', '_blank', '');
 }
 window.onload = function () {
 download();

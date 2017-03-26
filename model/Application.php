@@ -48,6 +48,15 @@ class Application extends mfwObject {
 		}
 		return $last_commented;
 	}
+
+	public function getLastRequested($format=null){
+		$last_requested = $this->value('last_requested');
+		if($format){
+			$last_requested = date($format,strtotime($last_requested));
+		}
+		return $last_requested;
+	}
+
 	public function getDateToSort($format=null){
 		$date_to_sort = $this->value('date_to_sort');
 		if($format){
@@ -61,7 +70,8 @@ class Application extends mfwObject {
 		$this->row['date_to_sort'] = max(
 			$this->getCreated(),
 			$this->getLastUpload(),
-			$this->getLastCommented());
+			$this->getLastCommented(),
+			$this->getLastRequested());
 	}
 
 	public function updateLastUpload($date,$con=null)
@@ -91,6 +101,20 @@ class Application extends mfwObject {
 			);
 		mfwDBIBase::query($sql,$bind,$con);
 	}
+
+        public function updateLastRequested($date,$con=null)
+        {
+                $this->row['last_requested'] = $date;
+                $this->calcDateToSort();
+
+                $sql = 'UPDATE application SET last_requested = :last_requested, date_to_sort = :date_to_sort WHERE id = :id';
+                $bind = array(
+                        ':last_requested' => $this->getLastRequested(),
+                        ':date_to_sort' => $this->getDateToSort(),
+                        ':id' => $this->getId(),
+                        );
+                mfwDBIBase::query($sql,$bind,$con);
+        }
 
 	public function getAPIKey()
 	{

@@ -11,10 +11,8 @@ class installActions extends packageActions
 	{
 		$pkg_id = $this->package->getId();
 		$token = Random::string(32);
-		error_log("executeInstall: token = $token\n", 3, "/tmp/install.log");
 		// tokenは60秒有効
 		mfwMemcache::set(self::TOKEN_KEY_PREFIX.$token,$pkg_id,60);
-		error_log("executeInstall: token = $token\n", 3, "/tmp/install.log");
 		return $token;
 	}
 	protected function checkToken($token)
@@ -25,33 +23,25 @@ class installActions extends packageActions
 
 	public function executeInstall()
 	{
-		error_log("executeInstall: \n", 3, "/tmp/install.log");
 		$pf = $this->package->getPlatform();
 		$ua = mfwRequest::userAgent();
 
 		if($pf===Package::PF_IOS && $ua->isIOS()){
-			error_log("executeInstall: PF_IOS\n", 3, "/tmp/install.log");
 			// itms-service での接続はセッションを引き継げない
 			// 一時トークンをURLパラメータに付けることで認証する
 			$scheme = Config::get('enable_https')?'https':null; // HTTPSが使えるならHTTPS優先
-			error_log("executeInstall: scheme = $scheme\n", 3, "/tmp/install.log");
-			error_log("executeInstall: id = " . $this->package->getId() . "\n", 3, "/tmp/install.log");
-			error_log("executeInstall: token = " . $this->makeToken() .  "\n", 3, "/tmp/install.log");
 			$plist_url = mfwHttp::composeUrl(
 				mfwRequest::makeUrl('/package/install_plist',$scheme),
 				array(
 					'id' => $this->package->getId(),
 					't' => $this->makeToken(),
 					));
-			error_log("executeInstall: plist_url = $plist_url\n", 3, "/tmp/install.log");
 			$url = 'itms-services://?action=download-manifest&url='.urlencode($plist_url);
 		}
 		else{
-			error_log("executeInstall: not PF_IOS\n", 3, "/tmp/install.log");
 			// iPhone以外でのアクセスはパッケージを直接DL
 			$url = $this->package->getFileUrl('+60 min');
 		}
-		error_log("redirect url: " . $url . "\n", 3, "/tmp/install.log");
 
 		$con = mfwDBConnection::getPDO();
 		$con->beginTransaction();
@@ -61,7 +51,6 @@ class installActions extends packageActions
 		}
 		catch(Exception $e){
 			$con->rollback();
-			error_log("executeInstall: error\n", 3, "/tmp/install.log");
 			error_log(__METHOD__.'('.__LINE__.'): '.get_class($e).":{$e->getMessage()}");
 			throw $e;
 		}
@@ -70,7 +59,6 @@ class installActions extends packageActions
 		apache_log('pkg_id',$this->package->getId());
 		apache_log('platform',$this->package->getPlatform());
 
-		error_log("redirect url: " . $url . "\n", 3, "/tmp/php.log");
 		return $this->redirect($url);
 	}
 

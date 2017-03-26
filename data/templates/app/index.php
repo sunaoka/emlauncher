@@ -57,15 +57,15 @@ foreach($top_comments as $c):
 <?php endif ?>
     </div>
 
-    <ul id="pf-nav-tabs" class="nav nav-tabs">
-      <li<?php if($pf==='android'):?> class="active"<?php endif?> id="android">
-        <a href="<?="?id={$app->getId()}&pf=android"?>">Android</a>
+    <ul id="vpf-nav-tabs" class="nav nav-tabs">
+      <li<?php if($vpf==='android'):?> class="active"<?php endif?> id="android">
+        <a href="<?="?id={$app->getId()}&vpf=android"?>">Android</a>
       </li>
-      <li<?php if($pf==='ios'):?> class="active"<?php endif?> id="ios">
-        <a href="<?="?id={$app->getId()}&pf=ios"?>">iOS</a>
+      <li<?php if($vpf==='ios'):?> class="active"<?php endif?> id="ios">
+        <a href="<?="?id={$app->getId()}&vpf=ios"?>">iOS</a>
       </li>
-      <li<?php if($pf==='all'):?> class="active"<?php endif?> id="all">
-        <a href="<?="?id={$app->getId()}&pf=all"?>">All</a>
+      <li<?php if($vpf==='all'):?> class="active"<?php endif?> id="all">
+        <a href="<?="?id={$app->getId()}&vpf=all"?>">All</a>
       </li>
     </ul>
 
@@ -107,7 +107,9 @@ foreach($top_comments as $c):
           <span class="info visible-xs visible-sm"><?=$pkg->getCreated('Y-m-d H:i')?></span>
         </td>
         <td class="text-center">
-<?php if($login_user->getPackageInstalledDate($pkg)): ?>
+<?php if(!$login_user->getPackageInstalleable($pkg)): ?>
+          <a class="btn btn-warning install-link col-xs-12" href="<?=$pkg->getRequestUrl()?>"><i class="fa fa-envelope"></i> Send Request</a>
+<?php elseif($login_user->getPackageInstalledDate($pkg)): ?>
           <a class="btn btn-success install-link col-xs-12" href="<?=$pkg->getInstallUrl()?>"><i class="fa fa-check"></i> Installed</a>
 <?php else: ?>
           <a class="btn btn-primary install-link col-xs-12" href="<?=$pkg->getInstallUrl()?>"><i class="fa fa-download"></i> Install</a>
@@ -173,16 +175,16 @@ function get_url_param_tabs() {
 }
 
 function compose_url() {
-  var pf = 'all';
-  var $active_pf_tabs = $('#pf-nav-tabs>li.active');
-  if ($active_pf_tabs.length>0) {
-    pf = $active_pf_tabs[0].id
+  var vpf = 'all';
+  var $active_vpf_tabs = $('#vpf-nav-tabs>li.active');
+  if ($active_vpf_tabs.length>0) {
+    vpf = $active_vpf_tabs[0].id
   }
   var of = '';
   if ($('i.fa-angle-double-up').length>0) {
     of = '&filter_open=1';
   }
-  return "<?="id={$app->getId()}&pf="?>" + pf + get_url_param_tabs() + of;
+  return "<?="id={$app->getId()}&vpf="?>" + vpf + get_url_param_tabs() + of;
 }
 
 // filter by tag
@@ -200,7 +202,7 @@ $('.package-list-item-info').on('click',function(event){
   $('a',this)[0].click();
 });
 
-$('#pf-nav-tabs>li').on('click', function(event){
+$('#vpf-nav-tabs>li').on('click', function(event){
   if ($('a', this)) {
     location.href = $('a', this)[0].href + get_url_param_tabs();
     event.preventDefault();

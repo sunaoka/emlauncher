@@ -2,6 +2,7 @@
 require_once APP_ROOT.'/model/Application.php';
 require_once APP_ROOT.'/model/Package.php';
 require_once APP_ROOT.'/model/Comment.php';
+require_once APP_ROOT.'/model/Request.php';
 
 class appActions extends MainActions
 {
@@ -78,17 +79,20 @@ class appActions extends MainActions
 			'all' => null,
 			);
 
-		$platform = mfwRequest::param('pf');
-		if(!in_array($platform,array('android','ios','all'))){
-			$ua = mfwRequest::userAgent();
-			if($ua->isAndroid()){
-				$platform = 'android';
-			}
-			elseif($ua->isIOS()){
-				$platform = 'ios';
-			}
-			else{
-				$platform = 'all';
+		$platform = mfwRequest::param('vpf');
+		if ( !in_array($platform, array('android', 'ios', 'all')) ) {
+			$platform = mfwRequest::param('pf');
+			if(!in_array($platform,array('android','ios','all'))){
+				$ua = mfwRequest::userAgent();
+				if($ua->isAndroid()){
+					$platform = 'android';
+				}
+				elseif($ua->isIOS()){
+					$platform = 'ios';
+				}
+				else{
+					$platform = 'all';
+				}
 			}
 		}
 
@@ -112,7 +116,7 @@ class appActions extends MainActions
 		$commented_package = PackageDb::retrieveByPKs($top_comments->getColumnArray('package_id'));
 
 		$params = array(
-			'pf' => $platform,
+			'vpf' => $platform,
 			'is_owner' => $this->app->isOwner($this->login_user),
 			'packages' => $pkgs,
 			'active_tags' => $tags,

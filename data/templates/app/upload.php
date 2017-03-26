@@ -26,6 +26,7 @@
         <input type="hidden" id="file-name" name="file_name" value="">
         <input type="hidden" id="ios-identifier" name="ios_identifier" value="">
         <input type="hidden" id="file-size" name="file_size" value="">
+	<input type="hidden" id="provisioned_devices" name="provisioned_devices" value="">
         <div class="well well-lg droparea text-center hidden-xs">
           Drop your apk/ipa file here.
         </div>
@@ -157,6 +158,7 @@
         $('#platform').val(data.platform);
         $('#temp-name').val(data.temp_name);
         $('#ios-identifier').val(data.ios_identifier);
+	$('#provisioned_devices').val(data.provisioned_devices);
         $('#file-name').val(file.name);
         $('#file-name-display').html('<i class="fa fa-check success"></i> '+file.name);
         $('#file-info').text(data.platform+', size: '+file.size.toLocaleString()+' bytes');

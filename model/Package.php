@@ -3,6 +3,7 @@ require_once APP_ROOT.'/model/Application.php';
 require_once APP_ROOT.'/model/Tag.php';
 require_once APP_ROOT.'/model/Random.php';
 require_once APP_ROOT.'/model/S3.php';
+require_once APP_ROOT.'/model/PackageUDID.php';
 
 /**
  * Row object for 'package' table.
@@ -152,6 +153,11 @@ class Package extends mfwObject {
 		return mfwRequest::makeUrl("/package/install?id={$this->getId()}");
 	}
 
+	public function getRequestUrl()
+	{
+		return mfwRequest::makeUrl("/app/request?id={$this->getAppId()}");
+	}
+
 	public function getInstallUsers()
 	{
 		if($this->install_users===null){
@@ -191,6 +197,24 @@ class Package extends mfwObject {
 			$this->guest_passes = GuestPassDb::selectByPackageId($this->getId());
 		}
 		return $this->guest_passes;
+	}
+
+	public function getInstallablePackageIds($device_udid)
+	{
+		var_dump_log("device_udid", $device_udid);
+		if ( $device_udid > 0 ) {
+			$installablePackages = PackageUDIDDb::selectByDeviceUDID($device_udid);
+			var_dump_log("installablePackages", $installablePackages);
+			$emptyUDIDPackages = PackageDb::selectByEmptyInstallableUDIDs();
+			var_dump_log("emptyUDIDPackages", $emptyUDIDPackages);
+			$installablePackageIds = $installablePackages->getColumnArray('package_id');
+			$emptyUDIDPackagesIds = $emptyUDIDPackages->getColumnArray('id');
+			var_dump_log("emptyUDIDPackagesIds", $emptyUDIDPackagesIds);
+			$installablePackageIds = array_merge($installablePackageIds, $emptyUDIDPackagesIds);
+			var_dump_log("installablePackageIds", $installablePackageIds);
+			return $installablePackageIds;
+		}
+		return null;
 	}
 }
 
@@ -248,6 +272,12 @@ class PackageDb extends mfwObjectDb {
 		$pkg->insert($con);
 		$pkg->initTags($tags,$con);
 		return $pkg;
+	}
+
+	public static function selectByEmptyInstallableUDIDs()
+	{
+		$query = 'WHERE NOT EXISTS (SELECT * FROM package_udid WHERE package_id=package.id)';
+		return static::selectSet($query);
 	}
 
 	public static function selectByAppId($app_id,$pf_filter=null)

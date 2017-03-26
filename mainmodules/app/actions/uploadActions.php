@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/actions.php';
 require_once APP_ROOT.'/model/Package.php';
+require_once APP_ROOT.'/model/PackageUDID.php';
 
 class uploadActions extends appActions
 {
@@ -34,6 +35,7 @@ class uploadActions extends appActions
 		$notify = mfwRequest::param('notify');
 		$org_filename = mfwRequest::param('file_name');
 		$filesize = mfwRequest::param('file_size');
+		$provisioned_devices = mfwRequest::param('provisioned_devices');
 
 		if(!$temp_name || !$title){
 			error_log(__METHOD__.'('.__LINE__."): bad request: $temp_name, $title");
@@ -52,6 +54,13 @@ class uploadActions extends appActions
 				$this->app->getId(),$platform,$ext,$title,$description,$ios_identifier,$org_filename,$filesize,$tags,$con);
 
 			$pkg->renameTempFile($temp_name);
+
+			if ( !empty($provisioned_devices) ) {
+				$ios_udid_list = explode(",", $provisioned_devices);
+				foreach ( $ios_udid_list as $ios_udid ) {
+					$udid = PackageUDIDDb::insertNewPackageUUID($pkg->getId(), $ios_udid);
+				}
+			}
 
 			$app->updateLastUpload($pkg->getCreated(),$con);
 

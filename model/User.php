@@ -1,6 +1,6 @@
 <?php
 require_once APP_ROOT.'/model/InstallLog.php';
-require_once APP_ROOT.'/model/IOS_UDID.php';
+require_once APP_ROOT.'/model/IOS_DeviceInfo.php';
 require_once APP_ROOT.'/model/UserPass.php';
 
 class User
@@ -9,16 +9,37 @@ class User
 
 	protected $mail;
 	protected $device_uuid;
+	protected $device_udid;
+	protected $device_info_id;
 	protected $as_dmin;
 	protected $pkg_install_dates = array();
 	protected $install_apps = null;
+	protected $pkg_installables = array();
 
-	public function __construct($mail, $as_admin = 0, $device_uuid = null)
+	public function __construct($mail, $as_admin = 0, $device_uuid = null, $device_info_id = 0, $device_udid = null)
 	{
-error_log("device_uuid: " . $this->device_uuid, 3, "/tmp/module.log");
 		$this->mail = $mail;
 		$this->as_admin = $as_admin;
 		$this->device_uuid = $device_uuid;
+		$this->device_info_id = $device_info_id;
+		var_dump_log("device_uuid", $device_uuid);
+		var_dump_log("device_info_id", $device_info_id);
+		var_dump_log("device_udid", $device_udid);
+		if ( ( $device_info_id != 0 || !empty($device_uuid) ) && empty($device_udid) ) {
+			if ( !empty($device_uuid) ) {
+				$ios_device_info = IOS_DeviceInfoDb::selectByDeviceUUID($device_uuid);
+			}
+			else {
+				$ios_device_info = IOS_DeviceInfoDb::selectByDeviceInfoId($device_info_id);
+			}
+			var_dump_log("ios_device_info", $ios_device_info);
+			if ( !empty($ios_device_info) ) {
+				$this->device_udid = $ios_device_info->getDeviceUDID();
+				$this->device_info_id = $ios_device_info->getId();
+			}
+			var_dump_log("device_info_id", $this->device_info_id);
+			var_dump_log("device_udid", $this->device_udid);
+		}
 	}
 
 	public function getMail()
@@ -33,39 +54,38 @@ error_log("device_uuid: " . $this->device_uuid, 3, "/tmp/module.log");
 		if(!isset($session['mail'])){
 			return null;
 		}
-		return new self($session['mail'], $session['as_admin'], $session['device_uuid']);
+		return new self($session['mail'], $session['as_admin'], $session['device_uuid'], $session['device_info_id'], $session['device_udid']);
 	}
 
-	public static function login($mail, $as_admin = 0, $device_uuid = null)
+	public static function login($mail, $as_admin = 0, $device_uuid = null, $device_info_id = 0, $device_udid = null)
 	{
-		error_log("device_uuid: " . $device_uuid . "\n", 3, "/tmp/module.log");
 		$data = array(
 			'mail' => $mail,
 			'as_admin' => $as_admin,
 			'device_uuid' => $device_uuid,
+			'device_info_id' => $device_info_id,
+			'device_udid' => $device_udid,
 			);
-		mfwSession::set(self::SESKEY,$data);
-		return new self($mail);
+		mfwSession::set(self::SESKEY, $data);
+		return new self($mail, $as_admin, $device_uuid, $device_info_id, $device_udid);
 	}
 
 	public static function loginWithUUID($device_uuid)
 	{
-		error_log("device_uuid: " . $device_uuid . "\n", 3, "/tmp/module.log");
-                $udid = IOS_UDIDDb::selectByDeviceUUID($device_uuid);
-               	if ( empty($udid) ) {
+                $ios_device_info = IOS_DeviceInfoDb::selectByDeviceUUID($device_uuid);
+               	if ( empty($ios_device_info) ) {
                        	return null;
                	}
-		$device_udid = $udid->getDeviceUDID();
-		error_log("device_udid: " . $device_udid . "\n", 3, "/tmp/module.log");
-		$mail = $udid->getMail();
-		error_log("mail: " . $mail . "\n", 3, "/tmp/module.log");
+		$device_udid = $ios_device_info->getDeviceUDID();
+		$device_info_id = $ios_device_info->getId();
+		$mail = $ios_device_info->getMail();
                	$user_pass = UserPassDb::selectByEmail($mail);
                	if ( !$user_pass ) {
                        	return null;
                	}
 		$mail = $user_pass->getMail();
                	$as_admin = $user_pass->getAsAdmin();
-               	return User::login($mail, $as_admin, $device_uuid);
+               	return User::login($mail, $as_admin, $device_uuid, $device_info_id);
 	}
 
 	public static function logout()
@@ -87,6 +107,25 @@ error_log("device_uuid: " . $this->device_uuid, 3, "/tmp/module.log");
 			$date = date($format,strtotime($date));
 		}
 		return $date;
+	}
+
+	public function getPackageInstalleable(Package $pkg)
+	{
+		$appid = $pkg->getAppId();
+		var_dump_log("app_id", $pkg->getAppId());
+		$package_id = $pkg->getId();
+		var_dump_log("package_id", $package_id);
+                if ( !isset($this->pkg_installables[$appid]) ) {
+			$this->pkg_installables[$appid] = $pkg->getInstallablePackageIds($this->getDeviceUDID());
+                }
+		var_dump_log("pkg_installables", $this->pkg_installables[$appid]);
+		if ( $this->pkg_installables[$appid] == null ) {
+			return true;
+		}
+                if ( !in_array($package_id, $this->pkg_installables[$appid]) ) {
+                        return false;
+                }
+                return true;
 	}
 
 	public function getInstallApps()
@@ -120,8 +159,17 @@ error_log("device_uuid: " . $this->device_uuid, 3, "/tmp/module.log");
 
 	public function getDeviceUUID()
 	{
-		error_log("device_uuid: " . $this->device_uuid, 3, "/tmp/module.log");
 		return ( $this->device_uuid );
+	}
+
+	public function getDeviceUDID()
+	{
+		return ( $this->device_udid );
+	}
+
+	public function getDeviceInfoId()
+	{
+		return ( $this->device_info_id );
 	}
 
 	/**

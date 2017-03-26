@@ -27,6 +27,11 @@ class upload_package_temporaryAction extends apiActions
 			if($platform===Package::PF_IOS){
 				$plist = IPAFile::parseInfoPlist($file_path);
 				$ios_identifier = $plist['CFBundleIdentifier'];
+				if ( Config::get('enable_request_ios_udid') ) {
+					$mobile_provision = IPAFile::parseMobileProvision($file_info['tmp_name']);
+					$provisioned_devices = $mobile_provision['ProvisionedDevices'];
+					var_dump_log("provisioned_devices", $provisioned_devices);
+				}
 			}
 		}
 		catch(Exception $e){
@@ -42,6 +47,7 @@ class upload_package_temporaryAction extends apiActions
 				'temp_name' => $temp_name,
 				'platform' => $platform,
 				'ios_identifier' => $ios_identifier,
+				'provisioned_devices' => $provisioned_devices,
 				));
 	}
 }

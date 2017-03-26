@@ -60,7 +60,6 @@ class MainActions extends mfwActions
                 	}
 
 			$device_uuid = mfwRequest::param('device_uuid');
-			error_log("device_uuid: $device_uuid\n", 3, "/tmp/module.log");
 			if ( $platform == 'ios' && !empty($device_uuid) ) {
 				User::loginWithUUID($device_uuid);
 			}
@@ -78,14 +77,12 @@ class MainActions extends mfwActions
 		}
 
 		if ( Config::get('enable_request_ios_udid') ) {
-			error_log("modile: $this->module\n", 3, "/tmp/module.log");
 			if ( in_array($this->module, array('profile')) ) {
 				return null;
 			}
 
 			if ( $this->login_user ) {
 				$device_uuid = $this->login_user->getDeviceUUID();
-				error_log("login_user: " . $device_uuid . "\n", 3, "/tmp/module.log");
 		  		if ( $platform == "ios" && empty($device_uuid) ) {
                         		return $this->redirect(mfwRequest::makeUrl('/profile'));
 				}
