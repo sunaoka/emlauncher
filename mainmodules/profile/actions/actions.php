@@ -80,6 +80,7 @@ $data = <<<END
             <string>ICCID</string>
             <string>VERSION</string>
             <string>PRODUCT</string>
+	    <string>DEVICE_NAME</string>
 	  </array>
 	</dict>
         <key>PayloadOrganization</key>
