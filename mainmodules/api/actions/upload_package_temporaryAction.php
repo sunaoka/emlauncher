@@ -31,6 +31,11 @@ class upload_package_temporaryAction extends apiActions
 					$mobile_provision = IPAFile::parseMobileProvision($file_info['tmp_name']);
 					$provisioned_devices = $mobile_provision['ProvisionedDevices'];
 					var_dump_log("provisioned_devices", $provisioned_devices);
+					if ( $provisioned_devices && count($provisioned_devices) > 0 ) {
+						foreach ( $ios_udid_list as $ios_udid ) {
+                                        		$udid = PackageUDIDDb::insertNewPackageUUID($pkg->getId(), $ios_udid);
+                                		}
+					}
 				}
 			}
 		}
