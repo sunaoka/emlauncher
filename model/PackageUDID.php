@@ -134,6 +134,11 @@ class PackageUDIDDb extends mfwObjectDb {
                 return static::selectSet($query, array($device_udid));
         }
 
+	public static function removeFromPackage(Package $pkg, $con = null)
+	{
+		$sql = 'DELETE FROM package_udid WHERE package_id = ?';
+		mfwDBIBase::query($sql, array($pkg->getId()), $con);
+	}
 /*
 	public static function selectOwnUDID($user)
 	{

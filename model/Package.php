@@ -185,6 +185,7 @@ class Package extends mfwObject {
 	public function delete($con=null)
 	{
 		TagDb::removeFromPackage($this,$con);
+		PackageUDIDDb::removeFromPackage($this, $con);
 		return parent::delete($con);
 	}
 
