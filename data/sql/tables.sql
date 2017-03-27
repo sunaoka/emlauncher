@@ -133,3 +133,42 @@ CREATE TABLE guestpass_log
   KEY `idx_guest_pass_id` (`guest_pass_id`)
 )Engine=InnoDB default charset=utf8;
 
+drop table if exists `ios_device_info`;
+CREATE TABLE `ios_device_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mail` varchar(255) NOT NULL,
+  `device_uuid` varchar(36) NOT NULL UNIQUE,
+  `device_udid` varchar(40) DEFAULT NULL UNIQUE,
+  `device_name` varchar(64) DEFAULT NULL,
+  `device_version` varchar(32) DEFAULT NULL,
+  `device_product` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_mail` (`mail`),
+  KEY `idx_device_uuid` (`device_uuid`),
+  KEY `idx_device_udid` (`device_udid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+drop table if exists `package_udid`;
+CREATE TABLE `package_udid` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `package_id` int(11) NOT NULL,
+  `device_udid` varchar(36) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_package_id` (`package_id`),
+  KEY `idx_device_udid` (`device_udid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+drop table if exists `request`;
+create table `request` (
+  `id` integer not null auto_increment,
+  `app_id` integer not null,
+  `package_id` integer default null,
+  `number` integer not null comment 'アプリ毎の通し番号',
+  `mail` varchar(255) not null comment 'リクエストした人',
+  `message` text not null,
+  `device_udid` varchar(36) not null comment 'リクエストした端末のUDID',
+  `created` datetime not null,
+  key idx_app (`app_id`),
+  key idx_pkg (`package_id`),
+  primary key (`id`)
+)Engine=InnoDB default charset=utf8;

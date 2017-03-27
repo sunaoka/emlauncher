@@ -94,7 +94,7 @@ S3のbucket名に指定するbucketは予め作成しておきます。
 ブラウザでインスタンスにHTTPでアクセスします。
 EMLauncherのログインページが表示されたら完了です。
 
-###このForkでの新機能
+## このForkでの新機能
 EMlauncherにユーザー追加と一覧、削除の機能を追加しました。
 とくにメニューとかに追加はしていないので、一旦トップページからログインした後に直接URLを入力して機能を呼び出してください。
 ※ユーザーの追加や一覧、削除には管理者権限が必要です。
@@ -103,14 +103,36 @@ EMlauncherにユーザー追加と一覧、削除の機能を追加しました�
 update user_pass set as_admin=1 where mail='既存ユーザーのEmail';
 ```
 
-####新規ユーザーの登録
+### 新規ユーザーの登録
 ```
 https://<EMlauncherのドメイン>/account/new
 ```
 新規ユーザーの登録の際にas_administratorにチェックすると管理者権限を付与します。
 新規ユーザーの登録の際にpasswordとconfirm_passwordを空欄とすると、新規に追加したユーザーにパスワードリセットのメールが送信されます。
 
-####既存ユーザーの一覧と削除
+### 既存ユーザーの一覧と削除
 ```
 https://<EMlauncherのドメイン>/account/userlist
 ```
+
+### iOSの「Over-the-Airによるプロファイル配布サービス」機能を利用したiOSテスト端末のUDID自動収集機能実装
+RubyのWEBRickを使ったSECPサーバーを利用したEMlauncher向けProfile Serviceサーバーを用意することでテスト用に利用するiOS端末のUDIDを収集し、EMlauncherにアップロードされているAdHocテスト用アプリケーションのmobileprovisionに端末のUDIDが含まれていない灰にはテストアプリケーションの所有者に対してメールで対象端末のUDIDの追加をリクエストできるように改良を加えました。
+この機能は以下の様にemlauncher_config.phpのenable_request_ios_udidを有効(true)にして、同じくemlauncher_config.phpのsecp_hostにSECPサービスを稼働させたサーバーのホスト名を設定することで有効化されます。
+
+```emlauncher_config.php
+                /**
+                 * trueならiOSからのアクセスの場合は端末のUUIDを送信させて
+                 * 端末のUDIDがDBのテーブルに登録されているかを確認する。
+                 * ※端末からのUDIDの取得にはProfile Serviceの稼働が必要
+                 */
+                'enable_request_ios_udid' => true,
+                'secp_domain' => 'secp.hoge2.net',
+```
+
+#### 参考資料 (AppleのOTA によるプロファイル配布サービスの資料)
+<https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/iPhoneOTAConfiguration/profile-service/profile-service.html>
+
+<https://developer.apple.com/jp/documentation/iPhoneOTAConfiguration.pdf>
+
+#### EMlauncher向けSECPサービス(Rubyによる実装)のサンプル
+<https://github.com/kazuhidet/EMlauncherProfileService>

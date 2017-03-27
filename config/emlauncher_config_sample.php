@@ -25,6 +25,14 @@ $emlauncher_config = array(
 		 */
 		'enable_https' => false,
 
+		/**
+		 * trueならiOSからのアクセスの場合は端末のUUIDを送信させて
+                 * 端末のUDIDがDBのテーブルに登録されているかを確認する。
+                 * ※端末からのUDIDの取得にはProfile Serviceの稼働が必要
+		 */
+		'enable_request_ios_udid' => true,
+		'secp_host' => 'secp.example.com',
+
 		/** ログインの設定. */
 		'login' => array(
 			/**
@@ -64,6 +72,16 @@ $emlauncher_config = array(
 			'bucket_name' => 'emlauncher',
 			),
 		),
+		/** ローカルファイルシステムを使う場合の設定 */
+		/** pathはストレージに利用するローカルファイルシステムのパス、emlauncherを動作させるWEBサーバーからの読み書きを許可しておく */
+		/** urlは同上のパスをテスト端末のWEBブラウザからアクセスした際のURL */
+		/*
+		'local_filesystem' => array(
+			'path' => '/var/localfilesystem/emlauncher',
+			'url' => 'https://localfilesystem.example.com/emlauncher',
+			),
+		),
+		*/
 	);
 
 /**
@@ -73,4 +91,3 @@ $emlauncher_config = array(
 $emlauncher_config['local'] = $emlauncher_config['ec2'];
 $emlauncher_config['local']['login']['enable_google_auth'] = false;
 $emlauncher_config['local']['aws']['bucket_name'] = 'emlauncher-dev';
-

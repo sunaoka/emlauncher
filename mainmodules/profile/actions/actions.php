@@ -53,8 +53,8 @@ class profileActions extends MainActions
 		$emlauncher_url = mfwRequest::makeUrl('');
 		$device_uuid = mfwRequest::param('device_uuid');
 
-		$secp_domain = Config::get('secp_domain');
-		$domain_spec = explode(".", $secp_domain);
+		$secp_host = Config::get('secp_host');
+		$domain_spec = explode(".", $secp_host);
 		$p = count($domain_spec);
 		$secp_id = $domain_spec[--$p];
 		while ( $p-- ) {
@@ -72,7 +72,7 @@ $data = <<<END
         <key>PayloadContent</key>
 	<dict>
 	  <key>URL</key>
-	  <string>https://$secp_domain:8443/profile?device_uuid=$device_uuid</string>
+	  <string>https://$secp_host:8443/profile?device_uuid=$device_uuid</string>
 	  <key>DeviceAttributes</key>
 	  <array>
 	    <string>UDID</string>
