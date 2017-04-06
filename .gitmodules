@@ -1,6 +1,6 @@
 [submodule "mfw"]
 	path = mfw
-	url = git@github.com:kazuhidet/mfw.git
+	url = https://github.com/kazuhidet/mfw.git
 [submodule "libs/CFPropertyList"]
 	path = libs/CFPropertyList
 	url = https://github.com/rodneyrehm/CFPropertyList.git
