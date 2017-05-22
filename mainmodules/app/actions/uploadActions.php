@@ -57,6 +57,7 @@ class uploadActions extends appActions
 
 			if ( !empty($provisioned_devices) ) {
 				$ios_udid_list = explode(",", $provisioned_devices);
+				//var_dump_log('ios_udid_list', $ios_udid_list);
 				foreach ( $ios_udid_list as $ios_udid ) {
 					$udid = PackageUDIDDb::insertNewPackageUUID($pkg->getId(), $ios_udid);
 				}

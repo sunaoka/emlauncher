@@ -202,17 +202,17 @@ class Package extends mfwObject {
 
 	public function getInstallablePackageIds($device_udid)
 	{
-		var_dump_log("device_udid", $device_udid);
+		//var_dump_log("device_udid", $device_udid);
 		if ( $device_udid > 0 ) {
 			$installablePackages = PackageUDIDDb::selectByDeviceUDID($device_udid);
-			var_dump_log("installablePackages", $installablePackages);
+			//var_dump_log("installablePackages", $installablePackages);
 			$emptyUDIDPackages = PackageDb::selectByEmptyInstallableUDIDs();
-			var_dump_log("emptyUDIDPackages", $emptyUDIDPackages);
+			//var_dump_log("emptyUDIDPackages", $emptyUDIDPackages);
 			$installablePackageIds = $installablePackages->getColumnArray('package_id');
 			$emptyUDIDPackagesIds = $emptyUDIDPackages->getColumnArray('id');
-			var_dump_log("emptyUDIDPackagesIds", $emptyUDIDPackagesIds);
+			//var_dump_log("emptyUDIDPackagesIds", $emptyUDIDPackagesIds);
 			$installablePackageIds = array_merge($installablePackageIds, $emptyUDIDPackagesIds);
-			var_dump_log("installablePackageIds", $installablePackageIds);
+			//var_dump_log("installablePackageIds", $installablePackageIds);
 			return $installablePackageIds;
 		}
 		return null;

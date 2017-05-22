@@ -22,9 +22,9 @@ class User
 		$this->as_admin = $as_admin;
 		$this->device_uuid = $device_uuid;
 		$this->device_info_id = $device_info_id;
-		var_dump_log("device_uuid", $device_uuid);
-		var_dump_log("device_info_id", $device_info_id);
-		var_dump_log("device_udid", $device_udid);
+		//var_dump_log("device_uuid", $device_uuid);
+		//var_dump_log("device_info_id", $device_info_id);
+		//var_dump_log("device_udid", $device_udid);
 		if ( ( $device_info_id != 0 || !empty($device_uuid) ) && empty($device_udid) ) {
 			if ( !empty($device_uuid) ) {
 				$ios_device_info = IOS_DeviceInfoDb::selectByDeviceUUID($device_uuid);
@@ -32,13 +32,13 @@ class User
 			else {
 				$ios_device_info = IOS_DeviceInfoDb::selectByDeviceInfoId($device_info_id);
 			}
-			var_dump_log("ios_device_info", $ios_device_info);
+			//var_dump_log("ios_device_info", $ios_device_info);
 			if ( !empty($ios_device_info) ) {
 				$this->device_udid = $ios_device_info->getDeviceUDID();
 				$this->device_info_id = $ios_device_info->getId();
 			}
-			var_dump_log("device_info_id", $this->device_info_id);
-			var_dump_log("device_udid", $this->device_udid);
+			//var_dump_log("device_info_id", $this->device_info_id);
+			//var_dump_log("device_udid", $this->device_udid);
 		}
 	}
 
@@ -112,13 +112,13 @@ class User
 	public function getPackageInstalleable(Package $pkg)
 	{
 		$appid = $pkg->getAppId();
-		var_dump_log("app_id", $pkg->getAppId());
+		//var_dump_log("app_id", $pkg->getAppId());
 		$package_id = $pkg->getId();
-		var_dump_log("package_id", $package_id);
+		//var_dump_log("package_id", $package_id);
                 if ( !isset($this->pkg_installables[$appid]) ) {
 			$this->pkg_installables[$appid] = $pkg->getInstallablePackageIds($this->getDeviceUDID());
                 }
-		var_dump_log("pkg_installables", $this->pkg_installables[$appid]);
+		//var_dump_log("pkg_installables", $this->pkg_installables[$appid]);
 		if ( $this->pkg_installables[$appid] == null ) {
 			return true;
 		}

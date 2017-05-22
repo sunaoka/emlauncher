@@ -29,13 +29,9 @@ class upload_package_temporaryAction extends apiActions
 				$ios_identifier = $plist['CFBundleIdentifier'];
 				if ( Config::get('enable_request_ios_udid') ) {
 					$mobile_provision = IPAFile::parseMobileProvision($file_info['tmp_name']);
+					//var_dump_log("mobile_provision(t)", $mobile_provision);
 					$provisioned_devices = $mobile_provision['ProvisionedDevices'];
-					var_dump_log("provisioned_devices", $provisioned_devices);
-					if ( $provisioned_devices && count($provisioned_devices) > 0 ) {
-						foreach ( $ios_udid_list as $ios_udid ) {
-                                        		$udid = PackageUDIDDb::insertNewPackageUUID($pkg->getId(), $ios_udid);
-                                		}
-					}
+					//var_dump_log("provisioned_devices(t)", $provisioned_devices);
 				}
 			}
 		}

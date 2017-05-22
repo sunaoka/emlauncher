@@ -51,7 +51,9 @@ class uploadAction extends apiActions
 				$ios_identifier = $plist['CFBundleIdentifier'];
 				if ( Config::get('enable_request_ios_udid') ) {
 					$mobile_provision = IPAFile::parseMobileProvision($file_info['tmp_name']);
-					var_dump_log("mobile_provision", $mobile_provision);
+					//var_dump_log("mobile_provisioni(a)", $mobile_provision);
+					$provisioned_devices = $mobile_provision['ProvisionedDevices'];
+					//var_dump_log("provisioned_devices(a)", $provisioned_devices);
 				}
 			}
 
@@ -73,8 +75,12 @@ class uploadAction extends apiActions
 			$pkg->uploadFile($file_info['tmp_name'],$mime);
 
 			$app->updateLastUpload($pkg->getCreated(),$con);
-
 			$con->commit();
+			if ( $provisioned_devices && count($provisioned_devices) > 0 ) {
+				foreach ( $provisioned_devices as $ios_udid ) {
+                               		$udid = PackageUDIDDb::insertNewPackageUUID($pkg->getId(), $ios_udid);
+                        	}
+			}
 		}
 		catch(Exception $e){
 			if($con) $con->rollback();
