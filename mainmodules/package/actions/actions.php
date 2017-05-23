@@ -3,6 +3,7 @@ require_once APP_ROOT.'/model/Package.php';
 require_once APP_ROOT.'/model/Random.php';
 require_once APP_ROOT.'/model/GuestPass.php';
 require_once APP_ROOT.'/model/GuestPassLog.php';
+require_once APP_ROOT.'/model/Request.php';
 
 class packageActions extends MainActions
 {

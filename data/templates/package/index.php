@@ -29,7 +29,9 @@
         </p>
       </div>
       <div class="col-xs-5">
-<?php if($login_user->getPackageInstalledDate($package)): ?>
+<?php if(!$login_user->getPackageInstalleable($package)): ?>
+        <a href="<?=$package->getRequestUrl()?>" class="btn btn-warning col-xs-12"><i class="fa fa-envelope"></i>Send Request</a>
+<?php elseif($login_user->getPackageInstalledDate($package)): ?>
         <a href="<?=$package->getInstallUrl()?>" class="btn btn-success col-xs-12"><i class="fa fa-check"></i> Installed</a>
         <dl id="installed-date">
           <dt>Instaled at</dt>

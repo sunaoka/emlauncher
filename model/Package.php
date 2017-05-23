@@ -155,7 +155,7 @@ class Package extends mfwObject {
 
 	public function getRequestUrl()
 	{
-		return mfwRequest::makeUrl("/app/request?id={$this->getAppId()}");
+		return mfwRequest::makeUrl("/package/request?id={$this->getId()}");
 	}
 
 	public function getInstallUsers()
@@ -203,7 +203,7 @@ class Package extends mfwObject {
 	public function getInstallablePackageIds($device_udid)
 	{
 		//var_dump_log("device_udid", $device_udid);
-		if ( $device_udid > 0 ) {
+		if ( !empty($device_udid) ) {
 			$installablePackages = PackageUDIDDb::selectByDeviceUDID($device_udid);
 			//var_dump_log("installablePackages", $installablePackages);
 			$emptyUDIDPackages = PackageDb::selectByEmptyInstallableUDIDs();

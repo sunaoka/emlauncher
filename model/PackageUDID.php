@@ -40,19 +40,19 @@ class PackageUDIDSet extends mfwObjectSet {
 
 	protected function selectPackageUDIDs()
 	{
-		var_dump_log("this", $this);
+		//var_dump_log("this", $this);
 		if ( $this->PackageUDIDs === null ) {
 			$package_ids = $this->getColumnArray('id');
-			var_dump_log("package_ids", $package_ids);
+			//var_dump_log("package_ids", $package_ids);
 			$this->PackageUDIDs = PackageUDIDDb::retrieveByPKs($package_ids);
-			var_dump_log("PackageUDIDs", $this->PackageUDIDs);
+			//var_dump_log("PackageUDIDs", $this->PackageUDIDs);
 		}
 		return $this->PackageUDIDs;
 	}
 
 	public function __construct(Array $rows = array())
 	{
-		var_dump_log("rows", $rows);
+		//var_dump_log("rows", $rows);
 		parent::__construct($rows);
 		//$this->user = $user;
 	}
@@ -68,11 +68,11 @@ class PackageUDIDSet extends mfwObjectSet {
 /*
 	public function offsetGet($offset)
 	{
-		var_dump_log("this", $this);
+		//var_dump_log("this", $this);
 		$ip = parent::offsetGet($offset);
-		var_dump_log("ip", $ip);
+		//var_dump_log("ip", $ip);
 		$package_udids = $this->selectPackageUDIDs();
-		var_dump_log("package_udids", $package_udids);
+		//var_dump_log("package_udids", $package_udids);
 		if ( isset($package_udids[$ip->getDeviceUDID()]) ) {
 			$ip->setPackage($package_udids[$ip->getDeviceUDID()]);
 		}

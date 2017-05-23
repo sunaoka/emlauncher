@@ -17,34 +17,6 @@
 
   <div class="col-xs-12 col-sm-8 col-md-9">
 
-    <div id="request-form">
-      <form class="form-horizontal" method="post" action="<?=url('/app/request_post')?>">
-        <div id="alert-nomessage" class="alert alert-danger hidden">
-          コメントが入力されていません
-        </div>
-        <input type="hidden" name="id" value="<?=$app->getId()?>">
-        <label for="message" class="sr-only">Message</label>
-        <textarea name="message" class="form-control" rows="3"></textarea>
-        <div class="controls text-right">
-          <label for="package_id">Target package</label>
-<?php if($install_packages->count()>0): ?>
-          <select name="package_id" class="form-control">
-<?php foreach($install_packages as $pkg): ?>
-            <option value="<?=$pkg->getId()?>">
-              <?=block('platform_icon',array('package'=>$pkg,'with_name'=>true))?> -
-              <?=$pkg->getTitle()?></option>
-<?php endforeach ?>
-          </select>
-<?php else: ?>
-          <select name="package_id" class="form-control" disabled="disabled">
-            <option value="0" selected="selected">No package installed</option>
-          </select>
-<?php endif ?>
-          <button name="submit" class="btn btn-primary"><i class="fa fa-pencil"></i> Request</button>
-        </div>
-      </form>
-    </div>
-
     <div id="requests">
       <h3><?=$request_count?> requests</h3>
       <ul class="list-group">
@@ -66,7 +38,7 @@ foreach($requests as $c):
             <a href="<?=url("/package?id={$pkg->getId()}")?>">
               <?=block('platform_icon',array('package'=>$pkg))?> <?=htmlspecialchars($pkg->getTitle())?></a>
 <?php else: ?>
-            <span>No package installed</span>
+            <span>No package requested</span>
 <?php endif ?>
             (<?=$c->getCreated('Y-m-d H:i')?>)
           </div>

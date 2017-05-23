@@ -57,6 +57,12 @@ class RequestDb extends mfwObjectDb {
 		return (int)mfwDBIBase::getOne($sql,array($app_id));
 	}
 
+        public static function selectCountByPackageId($package_id)
+        {
+                $table = static::TABLE_NAME;
+                $sql = "SELECT count(*) FROM $table WHERE package_id = ?";
+                return (int)mfwDBIBase::getOne($sql,array($package_id));
+        }
 
 	public static function selectCountsByAppIds(array $app_ids)
 	{
@@ -77,6 +83,25 @@ class RequestDb extends mfwObjectDb {
 		return $counts;
 	}
 
+        public static function selectCountsByPackageIds(array $package_ids)
+        {
+                if ( empty($package_ids) ) {
+                        return array();
+                }
+
+                $bind = array();
+                $pf = static::makeInPlaceholder($package_ids,$bind);
+                $table = static::TABLE_NAME;
+                $sql = "SELECT package_id,count(*) FROM $table WHERE package_id IN ($pf)";
+                $rows = mfwDBIBase::getAll($sql,$bind);
+
+                $counts = array();
+                foreach ( $rows as $r ) {
+                        $counts[$r['package_id']] = $r['count(*)'];
+                }
+                return $counts;
+        }
+
 	public static function selectByAppId($app_id,$limit=null,$offset=0)
 	{
 		$query = 'WHERE app_id = ? ORDER BY id DESC';
@@ -88,6 +113,18 @@ class RequestDb extends mfwObjectDb {
 		}
 		return static::selectSet($query,array($app_id));
 	}
+
+        public static function selectByPackageId($package_id,$limit=null,$offset=0)
+        {
+                $query = 'WHERE package_id = ? ORDER BY id DESC';
+                if ( $limit !== null && ( (int)$limit ) > 0 ) {
+                        $query .= ' LIMIT '.(int)$limit;
+                }
+                if ( ( (int)$offset ) > 0 ) {
+                        $query .= ' OFFSET '.(int)$offset;
+                }
+                return static::selectSet( $query, array($app_id) );
+        }
 
 	public static function post(User $user,Application $app,$package_id,$message)
 	{
