@@ -53,12 +53,12 @@ class profileActions extends MainActions
 		$emlauncher_url = mfwRequest::makeUrl('');
 		$device_uuid = mfwRequest::param('device_uuid');
 
-		$secp_host = Config::get('secp_host');
-		$domain_spec = explode(".", $secp_host);
+		$scep_host = Config::get('scep_host');
+		$domain_spec = explode(".", $scep_host);
 		$p = count($domain_spec);
-		$secp_id = $domain_spec[--$p];
+		$scep_id = $domain_spec[--$p];
 		while ( $p-- ) {
-			$secp_id .= "." . $domain_spec[$p];
+			$scep_id .= "." . $domain_spec[$p];
 		}	 
 
 		header('Content-type: application/x-apple-aspen-config; chatset=utf-8');
@@ -72,7 +72,7 @@ $data = <<<END
         <key>PayloadContent</key>
 	<dict>
 	  <key>URL</key>
-	  <string>https://$secp_host:8443/profile?device_uuid=$device_uuid</string>
+	  <string>https://$scep_host:8443/profile?device_uuid=$device_uuid</string>
 	  <key>DeviceAttributes</key>
 	  <array>
 	    <string>UDID</string>
@@ -92,7 +92,7 @@ $data = <<<END
         <key>PayloadUUID</key>
         <string>$device_uuid</string>
         <key>PayloadIdentifier</key>
-        <string>$secp_id.profile-service</string>
+        <string>$scep_id.profile-service</string>
 	<key>PayloadDescription</key>
         <string></string>
         <key>PayloadRemovalDisallowed</key>

@@ -31,7 +31,7 @@ $emlauncher_config = array(
                  * ※端末からのUDIDの取得にはProfile Serviceの稼働が必要
 		 */
 		'enable_request_ios_udid' => true,
-		'secp_host' => 'secp.example.com',
+		'scep_host' => 'scep.example.com',
 
 		/** ログインの設定. */
 		'login' => array(

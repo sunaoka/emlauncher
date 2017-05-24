@@ -117,7 +117,7 @@ https://<EMlauncherのドメイン>/account/userlist
 
 ### iOSの「Over-the-Airによるプロファイル配布サービス」機能を利用したiOSテスト端末のUDID自動収集機能実装
 RubyのWEBRickを使ったSECPサーバーを利用したEMlauncher向けProfile Serviceサーバーを用意することでテスト用に利用するiOS端末のUDIDを収集し、EMlauncherにアップロードされているAdHocテスト用アプリケーションのmobileprovisionに端末のUDIDが含まれていない灰にはテストアプリケーションの所有者に対してメールで対象端末のUDIDの追加をリクエストできるように改良を加えました。
-この機能は以下の様にemlauncher_config.phpのenable_request_ios_udidを有効(true)にして、同じくemlauncher_config.phpのsecp_hostにSECPサービスを稼働させたサーバーのホスト名を設定することで有効化されます。
+この機能は以下の様にemlauncher_config.phpのenable_request_ios_udidを有効(true)にして、同じくemlauncher_config.phpのscep_hostにSECPサービスを稼働させたサーバーのホスト名を設定することで有効化されます。
 
 ```emlauncher_config.php
                 /**
@@ -126,7 +126,7 @@ RubyのWEBRickを使ったSECPサーバーを利用したEMlauncher向けProfile
                  * ※端末からのUDIDの取得にはProfile Serviceの稼働が必要
                  */
                 'enable_request_ios_udid' => true,
-                'secp_domain' => 'secp.hoge2.net',
+                'scep_domain' => 'scep.example.com',
 ```
 
 #### 参考資料 (AppleのOTA によるプロファイル配布サービスの資料)
