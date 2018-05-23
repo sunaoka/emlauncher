@@ -55,7 +55,7 @@ $('.notification-toggle button').on('click',function(event){
 
 $('button.delete').on('click',function(event){
   if(confirm("このアカウントをユーザーリストから削除します.\n個々のパッケージのインストール履歴は削除されません.\n削除しますか?")){
-    location.href = '<?=url('/account/delete?email=')?>' + $(this).attr('data-email');
+    location.href = '<?=url('/account/delete?email=')?>' + encodeURIComponent($(this).attr('data-email'));
   }
 });
 
