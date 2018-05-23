@@ -46,6 +46,15 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
+<?php if($login_user->as_admin): ?>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="/account/new">New account</a></li>
+              <li><a href="/account/userlist">User List</a></li>
+            </ul>
+          </li>
+<?php endif ?>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=htmlspecialchars($login_user->getMail())?> <b class="caret"></b></a>
             <ul class="dropdown-menu">
