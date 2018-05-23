@@ -11,7 +11,7 @@ class User
 	protected $device_uuid;
 	protected $device_udid;
 	protected $device_info_id;
-	protected $as_dmin;
+	protected $as_admin;
 	protected $pkg_install_dates = array();
 	protected $install_apps = null;
 	protected $pkg_installables = array();
