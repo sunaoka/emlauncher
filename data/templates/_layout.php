@@ -46,7 +46,7 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-<?php if($login_user->as_admin): ?>
+<?php if($login_user->isAdmin()): ?>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
             <ul class="dropdown-menu">
