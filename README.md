@@ -96,9 +96,10 @@ EMLauncherのログインページが表示されたら完了です。
 
 ## このForkでの新機能
 EMlauncherにユーザー追加と一覧、削除の機能を追加しました。
-とくにメニューとかに追加はしていないので、一旦トップページからログインした後に直接URLを入力して機能を呼び出してください。
+~~とくにメニューとかに追加はしていないので、一旦トップページからログインした後に直接URLを入力して機能を呼び出してください~~（管理者権限が付与されているユーザにAdminメニューが表示されます）。
+
 ※ユーザーの追加や一覧、削除には管理者権限が必要です。
-既存のユーザーに管理者権限を付与する昨日は未実装なので、以下のようなSQLクエリーで``user_pass``テーブルの``as_admin``を非0値としてください。
+既存のユーザーに管理者権限を付与する機能は未実装なので、以下のようなSQLクエリーで``user_pass``テーブルの``as_admin``を非0値としてください。
 ```
 update user_pass set as_admin=1 where mail='既存ユーザーのEmail';
 ```
@@ -136,3 +137,12 @@ RubyのWEBRickを使ったSECPサーバーを利用したEMlauncher向けProfile
 
 #### EMlauncher向けSECPサービス(Rubyによる実装)のサンプル
 <https://github.com/kazuhidet/EMlauncherProfileService>
+
+### AWS S3以外のS3互換ストレージでの利用
+
+AWS S3以外のS3互換オブジェクトストレージでの利用が可能なように、設定を追懐しています。
+`config/emlauncher_config.php` の `$emlauncher_config['ec2']['aws']['base_url']` にS3互換オブジェクトストレージのエンドポイントURLを記載してください。
+
+#### 参考
+
+<https://github.com/purintai/emlauncher/commit/ef4f8186b6a6358c613898ebe2bc875b177ffedc>
