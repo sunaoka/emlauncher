@@ -39,7 +39,7 @@ class S3 {
 			$path_info = pathinfo("{$path}/{$key}");
 			if ( ! file_exists($path_info["dirname"]) ) {
 				if ( ! is_file($path_info["dirname"]) ) {
-					mkdir($path_info["dirname"]);
+					mkdir($path_info["dirname"], 0777, true);
 				}
 			}
                 	file_put_contents("{$path}/{$key}", $data);
@@ -64,7 +64,7 @@ class S3 {
 			$path_info = pathinfo("{$path}/{$key}");
                         if ( ! file_exists($path_info["dirname"]) ) {
                                 if ( ! is_file($path_info["dirname"]) ) {
-                                        mkdir($path_info["dirname"]);
+                                        mkdir($path_info["dirname"], 0777, true);
                                 }
                         }
 			$fp = fopen($filename,'rb');
@@ -94,7 +94,7 @@ class S3 {
 			$path_info = pathinfo("{$path}/{$dstkey}");
                         if ( ! file_exists($path_info["dirname"]) ) {
                                 if ( ! is_file($path_info["dirname"]) ) {
-                                        mkdir($path_info["dirname"]);
+                                        mkdir($path_info["dirname"], 0777, true);
                                 }
                         }
 			rename("{$path}/{$srckey}", "{$path}/{$dstkey}");
